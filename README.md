@@ -1,0 +1,2 @@
+# RNN_Pytorch
+使用pytorch框架搭建一个encoder-forecaster结构的图像时序预测模型，ConvGRU内核

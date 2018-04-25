@@ -5,7 +5,7 @@
 
     BMSELoss.py 一个对不同降雨级别进行加权损失的loss函数。
     ConvGRUCell.py 利用卷积操作实现的ConvGRU内核，单Cell
-    encoder。py 序列编码结构
+    encoder.py 序列编码结构
     forecaster.py 序列预测结构
     HKO_EF.py 尝试一个试验性质的训练方式
     HKO_model.py HKO-7模型的搭建和训练

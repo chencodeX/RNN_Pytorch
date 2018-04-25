@@ -5,6 +5,7 @@
 
     BMSELoss.py 一个对不同降雨级别进行加权损失的loss函数。
     ConvGRUCell.py 利用卷积操作实现的ConvGRU内核，单Cell
+    ConvLSTM.py 利用卷积操作实现的ConvLSTM内核，包含了单Cell，多层Cell的实现方式，以及一个实验用的RNN模型
     encoder.py 序列编码结构
     forecaster.py 序列预测结构
     HKO_EF.py 尝试一个试验性质的训练方式

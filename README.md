@@ -15,7 +15,7 @@
 
 ##模型说明 
 
-    本项目参考的HKO模型为论文[Deep learning for precipitation nowcasting: A benchmark and a new model](http://papers.nips.cc/paper/7145-deep-learning-for-precipitation-nowcasting-a-benchmark-and-a-new-model)
+    本项目参考的HKO模型为论文  [Deep learning for precipitation nowcasting: A benchmark and a new model](http://papers.nips.cc/paper/7145-deep-learning-for-precipitation-nowcasting-a-benchmark-and-a-new-model)
     encoder和forecaster 结构皆参照此论文编写
     本文的数据样本原始大为20*1*477*477，训练过程中会缩放或随机切割到120*120大小。
     原始数据为0-70之间的DBz值，在输入网络前已经映射到（0-255）/255.所以代码中的BMSELoss的阈值也经过了调整。

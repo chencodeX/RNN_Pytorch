@@ -73,6 +73,75 @@ class CLSTM_cell(nn.Module):
                 Variable(torch.zeros(batch_size, self.num_features, self.shape[0], self.shape[1])).cuda())
 
 
+class CLSTM_all_cell(nn.Module):
+    """Initialize a basic Conv LSTM cell.
+    Args:
+      shape: int tuple thats the height and width of the hidden states h and c()
+      filter_size: int that is the height and width of the filters
+      num_features: int thats the num of channels of the states, like hidden_size
+
+    """
+
+    def __init__(self, shape, input_chans, filter_size, num_features):
+        super(CLSTM_all_cell, self).__init__()
+
+        self.shape = shape  # H,W
+        self.input_channels = input_chans
+        self.kernel_size = filter_size
+        self.hidden_channels = num_features
+        self.dropout = nn.Dropout(p=0.5)
+        # self.batch_size=batch_size
+        self.padding = (filter_size - 1) / 2  # in this way the output has the same size
+
+        self.Wxi = nn.Conv2d(self.input_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=True)
+        self.Whi = nn.Conv2d(self.hidden_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=False)
+        self.Wxf = nn.Conv2d(self.input_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=True)
+        self.Whf = nn.Conv2d(self.hidden_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=False)
+        self.Wxc = nn.Conv2d(self.input_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=True)
+        self.Whc = nn.Conv2d(self.hidden_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=False)
+        self.Wxo = nn.Conv2d(self.input_channels, self.hidden_channels, self.kernel_size, 1, self.padding,  bias=True)
+        self.Who = nn.Conv2d(self.hidden_channels, self.hidden_channels, self.kernel_size, 1, self.padding, bias=False)
+
+        self.Wci = None
+        self.Wcf = None
+        self.Wco = None
+
+    def forward(self, input, hidden_state):
+
+
+
+        hidden, c = hidden_state  # hidden and c are images with several channels
+
+        ci = torch.sigmoid(self.Wxi(input) + self.Whi(hidden) + c * self.Wci)
+        cf = torch.sigmoid(self.Wxf(input) + self.Whf(hidden) + c * self.Wcf)
+        co = torch.sigmoid(self.Wxo(input) + self.Who(hidden) + c * self.Wco)
+        new_c = cf * c + ci * torch.tanh(self.Wxc(input) + self.Whc(hidden))
+        # co = torch.sigmoid(self.Wxo(input) + self.Who(hidden) + new_c * self.Wco)
+        new_h = co * torch.tanh(new_c)
+        # combined = torch.cat((input, hidden), 1)  # oncatenate in the channels
+        # A = self.conv(combined)
+        # (ai, af, ao, ag) = torch.split(A, self.num_features, dim=1)  # it should return 4 tensors
+        # i = torch.sigmoid(ai)
+        # i = self.dropout(i)
+        # f = torch.sigmoid(af)
+        # f = self.dropout(f)
+        # o = torch.sigmoid(ao)
+        # o = self.dropout(o)
+        # g = torch.tanh(ag)
+        # g = self.dropout(g)
+        #
+        # next_c = f * c + i * g
+        # next_h = o * torch.tanh(next_c)
+        # next_h = self.dropout(next_h)
+        return new_h, (new_h,new_c)
+
+    def init_hidden(self, batch_size):
+        self.Wci = Variable(torch.zeros(1, self.hidden_channels, self.shape[0], self.shape[1])).cuda()
+        self.Wcf = Variable(torch.zeros(1, self.hidden_channels, self.shape[0], self.shape[1])).cuda()
+        self.Wco = Variable(torch.zeros(1, self.hidden_channels, self.shape[0], self.shape[1])).cuda()
+        return (Variable(torch.zeros(batch_size, self.hidden_channels, self.shape[0], self.shape[1])).cuda(),
+                Variable(torch.zeros(batch_size, self.hidden_channels, self.shape[0], self.shape[1])).cuda())
+
 class MultiConvRNNCell(nn.Module):
     def __init__(self,cells,state_is_tuple=True):
         super(MultiConvRNNCell, self).__init__()

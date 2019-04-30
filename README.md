@@ -19,3 +19,6 @@
     encoder和forecaster 结构皆参照此论文编写
     本文的数据样本原始大为20*1*477*477，训练过程中会缩放或随机切割到120*120大小。
     原始数据为0-70之间的DBz值，在输入网络前已经映射到（0-255）/255.所以代码中的BMSELoss的阈值也经过了调整。
+    
+    
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
